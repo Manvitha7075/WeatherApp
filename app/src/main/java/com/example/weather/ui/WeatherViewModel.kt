@@ -4,7 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather.domain.model.WeatherDomain
-import com.example.weather.domain.repository.WeatherRepository
+import com.example.weather.domain.usecase.GetWeatherByCityUseCase
+import com.example.weather.domain.usecase.GetWeatherByLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +18,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val weatherRepository: WeatherRepository,
-    private val sharedPreferences: SharedPreferences,
+    private val getWeatherByCityUseCase: GetWeatherByCityUseCase,
+    private val getWeatherByLocationUseCase: GetWeatherByLocationUseCase,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     // StateFlow to hold the UI state for weather data
@@ -37,7 +39,7 @@ class WeatherViewModel @Inject constructor(
             // Update state to loading
             _weatherUiState.value = WeatherUiState(isLoading = true)
             saveLastSearchedCity(city)
-            weatherRepository.getWeatherData(city)
+            getWeatherByCityUseCase(city)
                 .onSuccess { weatherDomain ->
                     // Update UI state with the received data
                     _weatherUiState.value = WeatherUiState(isLoading = false)
@@ -56,7 +58,7 @@ class WeatherViewModel @Inject constructor(
     fun getWeatherDataByLocation(lat: Double, lon: Double) {
         _weatherUiState.value = WeatherUiState(isLoading = true)
         viewModelScope.launch {
-            weatherRepository.getWeatherDataByLocation(lat, lon)
+            getWeatherByLocationUseCase(lat, lon)
                 .onSuccess { weatherDomain ->
                     _weatherUiState.value = WeatherUiState(isLoading = false)
                     _weatherUiState.value = WeatherUiState(weather = weatherDomain)

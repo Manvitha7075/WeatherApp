@@ -3,7 +3,6 @@ package com.example.weather.data.repository
 import com.example.weather.data.api.WeatherApiService
 import com.example.weather.data.model.WeatherResponse
 import com.example.weather.domain.model.WeatherDomain
-import com.example.weather.domain.repository.WeatherRepository
 import javax.inject.Inject
 
 /**

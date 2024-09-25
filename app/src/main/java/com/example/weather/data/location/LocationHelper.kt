@@ -1,4 +1,4 @@
-package com.example.weather.ui
+package com.example.weather.data.location
 
 import android.Manifest
 import android.content.Context

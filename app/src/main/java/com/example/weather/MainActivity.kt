@@ -2,7 +2,6 @@ package com.example.weather
 
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,7 +11,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.weather.ui.LocationHelper
+import com.example.weather.data.location.LocationHelper
 import com.example.weather.ui.WeatherSearchScreen
 import com.example.weather.ui.WeatherViewModel
 import com.example.weather.ui.theme.WeatherTheme
@@ -28,20 +27,16 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (isGranted) {
-            Log.d("MainActivity", "Permission granted, fetching location...")
             locationHelper.checkLocationPermission()
         } else {
             fetchWeatherDataWithLastSearchedCity()
-            Log.d("MainActivity", "Permission denied")
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             weatherViewModel = hiltViewModel()
-
             WeatherTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -58,7 +53,7 @@ class MainActivity : ComponentActivity() {
             }
 
             locationHelper = LocationHelper(this, requestPermissionLauncher) { location ->
-                getWeatherDataFromLocation(location, weatherViewModel)
+                getWeatherDataFromLocation(location)
             }
             locationHelper.checkLocationPermission()
         }
@@ -67,9 +62,10 @@ class MainActivity : ComponentActivity() {
     /**
      * Function to get the weather data based on the current location
      */
-    private fun getWeatherDataFromLocation(location: Location, weatherViewModel: WeatherViewModel) {
+    private fun getWeatherDataFromLocation(location: Location) {
         val latitude = location.latitude
         val longitude = location.longitude
+        locationHelper.stopLocationUpdates()
         weatherViewModel.getWeatherDataByLocation(latitude, longitude)
     }
 
@@ -83,3 +79,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

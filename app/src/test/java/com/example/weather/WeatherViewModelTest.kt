@@ -2,7 +2,8 @@ package com.example.weather
 
 import android.content.SharedPreferences
 import com.example.weather.domain.model.WeatherDomain
-import com.example.weather.domain.repository.WeatherRepository
+import com.example.weather.domain.usecase.GetWeatherByCityUseCase
+import com.example.weather.domain.usecase.GetWeatherByLocationUseCase
 import com.example.weather.ui.WeatherViewModel
 import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,10 @@ class WeatherViewModelTest {
     private lateinit var weatherViewModel: WeatherViewModel
 
     @Mock
-    private lateinit var weatherRepository: WeatherRepository
+    private lateinit var getWeatherByCityUseCase: GetWeatherByCityUseCase
+
+    @Mock
+    private lateinit var getWeatherByLocationUseCase: GetWeatherByLocationUseCase
 
     private val sharedPreferences: SharedPreferences = mock(SharedPreferences::class.java)
     private val editor: SharedPreferences.Editor = mock(SharedPreferences.Editor::class.java)
@@ -36,7 +40,7 @@ class WeatherViewModelTest {
         `when`(sharedPreferences.edit()).thenReturn(editor)
         `when`(editor.putString(anyString(), anyString())).thenReturn(editor)
 
-        weatherViewModel = WeatherViewModel(weatherRepository, sharedPreferences)
+        weatherViewModel = WeatherViewModel(getWeatherByCityUseCase,getWeatherByLocationUseCase,sharedPreferences)
     }
 
     @Test
@@ -52,7 +56,7 @@ class WeatherViewModelTest {
             feelsLike = 14.0,
         )
 
-        `when`(weatherRepository.getWeatherData(city)).thenReturn(Result.success(weatherDomain))
+        `when`(getWeatherByCityUseCase(city)).thenReturn(Result.success(weatherDomain))
         weatherViewModel.getWeatherData(city)
 
         assert(weatherViewModel.weatherUiState.value.weather == weatherDomain)
@@ -66,7 +70,7 @@ class WeatherViewModelTest {
         val city = "Rochester"
         val errorMessage = "Unable to get data"
 
-        `when`(weatherRepository.getWeatherData(city)).thenReturn(
+        `when`(getWeatherByCityUseCase(city)).thenReturn(
             Result.failure(
                 Exception(
                     errorMessage,
@@ -92,7 +96,7 @@ class WeatherViewModelTest {
             feelsLike = 14.0,
         )
 
-        `when`(weatherRepository.getWeatherDataByLocation(lat, lon)).thenReturn(
+        `when`(getWeatherByLocationUseCase(lat, lon)).thenReturn(
             Result.success(
                 weatherDomain,
             ),
@@ -108,7 +112,7 @@ class WeatherViewModelTest {
         val lon = -0.1278
         val errorMessage = "Unable to get data"
 
-        `when`(weatherRepository.getWeatherDataByLocation(lat, lon)).thenReturn(
+        `when`(getWeatherByLocationUseCase(lat, lon)).thenReturn(
             Result.failure(
                 Exception(errorMessage),
             ),
@@ -123,7 +127,7 @@ class WeatherViewModelTest {
         val errorMessage = "Unable to fetch data"
         val city = "Rochester"
 
-        `when`(weatherRepository.getWeatherData(city)).thenReturn(
+        `when`(getWeatherByCityUseCase(city)).thenReturn(
             Result.failure(
                 Exception(
                     errorMessage,

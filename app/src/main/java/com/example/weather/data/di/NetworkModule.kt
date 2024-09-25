@@ -1,4 +1,4 @@
-package com.example.weather.data.di
+package com.example.weather.di
 
 import com.example.weather.data.api.WeatherApiService
 import com.squareup.moshi.Moshi
@@ -34,4 +34,6 @@ object NetworkModule {
     fun provideWeatherApiService(retrofit: Retrofit): WeatherApiService {
         return retrofit.create(WeatherApiService::class.java)
     }
+
+
 }
