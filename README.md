@@ -42,3 +42,11 @@ Retrofit is used for making network requests to the OpenWeatherMap API. All API 
 
 ## Testing
 Unit tests have been implemented for the ViewModel and data layers to ensure functionality and reliability.
+
+
+![SS1](https://github.com/user-attachments/assets/d2fecd9e-2905-4286-be77-ef1c5b6e5b5c)
+![SS2](https://github.com/user-attachments/assets/f232cd1f-fa2b-4e24-8cee-d7c4d65a9bc2)
+![SS3](https://github.com/user-attachments/assets/b5157146-a557-4d5b-823c-8bcf2f43f59d)
+
+
+
